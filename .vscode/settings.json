@@ -1,0 +1,11 @@
+{
+    "[rust]": {
+        "editor.tabSize": 4,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        "editor.inlayHints.enabled": "on",
+        "editor.inlayHints.fontSize": 12,
+    },
+    "rust-analyzer.checkOnSave": true,
+    "rust-analyzer.check.command": "clippy"
+}
