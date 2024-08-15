@@ -2,11 +2,10 @@
 
 diesel::table! {
     tasks (id) {
-        #[max_length = 256]
-        id -> Varchar,
+        id -> Integer,
         title -> Text,
         description -> Nullable<Text>,
-        due_date -> Nullable<Date>,
+        due_date -> Nullable<Datetime>,
         is_done -> Bool,
     }
 }

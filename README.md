@@ -28,6 +28,7 @@ cargo install cargo-watch
 # cargo watch -x ...
 # cargo run
 mold -run cargo watch -x run
+mold -run cargo run --bin get_tasks
 # test
 curl -X GET http://localhost:8080/
 # also, use Postman
@@ -42,7 +43,13 @@ mysql> FLUSH PRIVILEGES;
 mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
 mysql> FLUSH PRIVILEGES;
 mysql> quit;
+
 mysql -u root -p
+mysql> show databases;
+mysql> show tables from todoapp_db;
+mysql> show columns from tasks from todoapp_db;
+mysql> use todoapp_db;
+mysql> select * from tasks;
 
 cargo install diesel_cli --no-default-features --features mysql
 # edit .env (DATABASE_URL)
@@ -58,14 +65,23 @@ diesel migration redo
 - official
   - <https://github.com/rui314/mold>
   - <https://github.com/actix/actix-web>
+  - <https://github.com/diesel-rs/diesel>
+    - CLI: <https://github.com/diesel-rs/diesel/tree/master/diesel_cli>
+    - diesel + mysql sample (CRUD): <https://github.com/diesel-rs/diesel/tree/2.2.x/examples/mysql/getting_started_step_3/src/bin>
   - <https://actix.rs/docs/getting-started>
   - <https://docs.rs/actix-web/latest/actix_web/>
+  - <https://docs.rs/diesel/latest/diesel/>
+    - Create: <https://docs.rs/diesel/latest/diesel/fn.insert_into.html>
+    - Read: <https://docs.rs/diesel/latest/diesel/query_dsl/trait.QueryDsl.html#method.select>
+    - Update: <https://docs.rs/diesel/latest/diesel/fn.update.html>
+    - Delete: <https://docs.rs/diesel/latest/diesel/fn.delete.html>
   - <https://www.postman.com/>
-  - <https://github.com/diesel-rs/diesel/tree/master/diesel_cli>
 - overall
   - <https://github.com/flosse/rust-web-framework-comparison#server-frameworks>
   - <https://github.com/nemesiscodex/actix-todo>
   - <https://github.com/tetter27/webapi_mvp>
   - <https://ozway.jp/2020/10/rust-mysql-diesel%EF%BC%881%EF%BC%89/>
+  - <https://synamon.hatenablog.com/entry/actix_web_api>
+  - <https://github.com/krocks96/rust-backend-playground>
 - spot
-  - <https://redj.hatenablog.com/entry/2023/04/09/012242>
+  - MySQL setup error: <https://redj.hatenablog.com/entry/2023/04/09/012242>

@@ -1,7 +1,10 @@
 CREATE TABLE tasks (
-    id VARCHAR(256) NOT NULL PRIMARY KEY
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY
     , title TEXT NOT NULL
     , description TEXT
-    , due_date DATE
+    , due_date DATETIME
+    -- , due_date TIMESTAMP
     , is_done BOOLEAN NOT NULL
+    -- , created_at TIMESTAMP NOT NULL
+    -- , updated_at TIMESTAMP NOT NULL
 );
