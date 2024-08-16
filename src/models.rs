@@ -1,10 +1,9 @@
+use crate::schema;
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
-use super::schema::tasks;
-
 #[derive(Debug, Queryable, Selectable, Serialize, Deserialize)]
-#[diesel(table_name = tasks)]
+#[diesel(table_name = schema::tasks)]
 pub struct Task {
     pub id: i32, // TODO: use ULID: Universally Unique Lexicographically Sortable Identifier
     pub title: String,
@@ -17,8 +16,8 @@ pub struct Task {
     // pub updated_at: String,
 }
 
-#[derive(Debug, Insertable, AsChangeset, Deserialize)]
-#[diesel(table_name = tasks)]
+#[derive(Debug, Clone, Insertable, AsChangeset, Deserialize)]
+#[diesel(table_name = schema::tasks)]
 pub struct NewTask {
     pub title: String,
     pub description: Option<String>,

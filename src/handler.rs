@@ -9,6 +9,7 @@ use actix_web::{
 
 #[actix_web::get("/")]
 async fn index() -> impl Responder {
+    println!("[index]");
     HttpResponse::Ok()
         .status(StatusCode::OK)
         .insert_header(ContentType::html())
@@ -23,6 +24,7 @@ async fn create_task(db_pool: web::Data<DbPool>, new_task: web::Json<NewTask>) -
     let db_pool: &DbPool = db_pool.get_ref();
     // into_inner(): Deserialize Json -> NewTask
     let new_task = new_task.into_inner();
+    println!("[create] new_task: {:?}", new_task);
     match db::create_task(db_pool, new_task).await {
         // .json(): Serialize Task -> Json
         Ok(created_task) => HttpResponse::Ok()
@@ -37,6 +39,7 @@ async fn create_task(db_pool: web::Data<DbPool>, new_task: web::Json<NewTask>) -
 #[actix_web::get("/tasks")]
 async fn get_tasks(db_pool: web::Data<DbPool>) -> impl Responder {
     let db_pool = db_pool.get_ref();
+    println!("[get]");
     match db::get_tasks(db_pool).await {
         Ok(tasks) => HttpResponse::Ok().json(tasks),
         Err(err) => {
@@ -56,6 +59,7 @@ async fn update_task(
     let task_id = task_id.into_inner();
     // into_inner(): Deserialize Json -> NewTask
     let new_task = new_task.into_inner();
+    println!("[update] task_id: {task_id}, new_task: {:?}", new_task);
     match db::update_task(db_pool, task_id, new_task).await {
         Ok(updated_task) => HttpResponse::Ok().json(updated_task),
         Err(err) => {
@@ -68,6 +72,7 @@ async fn update_task(
 async fn delete_task(db_pool: web::Data<DbPool>, task_id: web::Path<i32>) -> impl Responder {
     let db_pool = db_pool.get_ref();
     let task_id = task_id.into_inner();
+    println!("[delete] task_id: {task_id}");
     match db::delete_task(db_pool, task_id).await {
         Ok(_) => {
             // 空のレスポンスを返す時は，finish()するらしい

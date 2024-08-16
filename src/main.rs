@@ -18,7 +18,7 @@ async fn main() -> std::io::Result<()> {
         .expect("Error: parsing API_PORT");
     let database_url: &str = &std::env::var("DATABASE_URL").expect("Error: missing DATABASE_URL");
     let db_pool = db::establish_connection_pool(database_url);
-    println!("Launching server at http://{addr}:{port}");
+    println!("\nLaunching server at http://{addr}:{port}\n");
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(db_pool.clone()))
