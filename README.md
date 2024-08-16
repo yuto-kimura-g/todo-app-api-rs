@@ -77,11 +77,13 @@ diesel migration redo
     - Delete: <https://docs.rs/diesel/latest/diesel/fn.delete.html>
   - <https://www.postman.com/>
 - overall
+  - why TODO App: <https://levtech.jp/media/article/column/detail_473/>
   - <https://github.com/flosse/rust-web-framework-comparison#server-frameworks>
   - <https://github.com/nemesiscodex/actix-todo>
   - <https://github.com/tetter27/webapi_mvp>
   - <https://ozway.jp/2020/10/rust-mysql-diesel%EF%BC%881%EF%BC%89/>
   - <https://synamon.hatenablog.com/entry/actix_web_api>
   - <https://github.com/krocks96/rust-backend-playground>
+  - <https://youtu.be/4Q7FAMydzOU?si=EjewNYm9KgkIWMfo>
 - spot
   - MySQL setup error: <https://redj.hatenablog.com/entry/2023/04/09/012242>

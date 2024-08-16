@@ -1,8 +1,4 @@
 use chrono::NaiveDateTime;
-use diesel::{
-    prelude::{AsChangeset, Insertable, Queryable},
-    Selectable,
-};
 use serde::{Deserialize, Serialize};
 
 use super::schema::tasks;
@@ -21,7 +17,7 @@ pub struct Task {
     // pub updated_at: String,
 }
 
-#[derive(Insertable, AsChangeset)]
+#[derive(Debug, Insertable, AsChangeset)]
 #[diesel(table_name = tasks)]
 pub struct NewTask {
     pub title: String,

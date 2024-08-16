@@ -15,8 +15,8 @@ async fn main() -> std::io::Result<()> {
             "8080".to_string()
         })
         .parse()
-        .unwrap_or(8080);
-
+        .expect("Error: parsing API_PORT");
+    println!("Launching server at http://{addr}:{port}");
     HttpServer::new(|| {
         App::new()
             .service(index)

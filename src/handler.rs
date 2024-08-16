@@ -1,12 +1,11 @@
 use actix_web::{
-    delete, get,
     http::{header::ContentType, StatusCode},
-    post, put, web, HttpResponse, Responder,
+    web, HttpResponse, Responder,
 };
 
 use crate::models::Task;
 
-#[get("/")]
+#[actix_web::get("/")]
 async fn index() -> impl Responder {
     HttpResponse::Ok()
         .status(StatusCode::OK)
@@ -14,7 +13,7 @@ async fn index() -> impl Responder {
         .body("Hello, Rust API World!")
 }
 
-#[post("/tasks")]
+#[actix_web::post("/tasks")]
 async fn create_task(task: web::Json<Task>) -> impl Responder {
     println!("create_task: {:?}", task);
     HttpResponse::Ok()
@@ -22,14 +21,14 @@ async fn create_task(task: web::Json<Task>) -> impl Responder {
         .body("Task created")
 }
 
-#[get("/tasks")]
+#[actix_web::get("/tasks")]
 async fn get_tasks() -> impl Responder {
     HttpResponse::Ok()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
         .body("get_tasks(): Not implemented")
 }
 
-// #[get("/tasks/{id}")]
+// #[actix_web::get("/tasks/{id}")]
 // async fn get_task(id: web::Path<String>) -> impl Responder {
 //     let task = Task {
 //         id: id.to_string(),
@@ -42,14 +41,14 @@ async fn get_tasks() -> impl Responder {
 //     HttpResponse::Ok().status(StatusCode::OK).json(task)
 // }
 
-#[put("/tasks/{id}")]
+#[actix_web::put("/tasks/{id}")]
 async fn update_task() -> impl Responder {
     HttpResponse::Ok()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
         .body("update_task(): Not implemented")
 }
 
-#[delete("/tasks/{id}")]
+#[actix_web::delete("/tasks/{id}")]
 async fn delete_task() -> impl Responder {
     HttpResponse::Ok()
         .status(StatusCode::INTERNAL_SERVER_ERROR)

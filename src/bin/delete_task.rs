@@ -1,7 +1,7 @@
-use todo_app_api::db::{delete_task, establish_connection};
+use todo_app_api::db_cli;
 
 fn main() {
-    let conn = &mut establish_connection();
+    let conn = &mut db_cli::establish_connection();
     let task_id = 1;
-    let _ = delete_task(conn, task_id);
+    let _ = db_cli::delete_task(conn, task_id);
 }

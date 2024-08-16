@@ -34,6 +34,50 @@ pub fn get_tasks(conn: &mut MysqlConnection) -> QueryResult<Vec<Task>> {
     tasks.select(Task::as_select()).load(conn)
 }
 
+pub fn update_task_title(
+    conn: &mut MysqlConnection,
+    task_id: i32,
+    new_title: String,
+) -> QueryResult<usize> {
+    use crate::schema::tasks::dsl::*;
+    diesel::update(tasks.filter(id.eq(task_id)))
+        .set(title.eq(new_title))
+        .execute(conn)
+}
+
+pub fn update_task_description(
+    conn: &mut MysqlConnection,
+    task_id: i32,
+    new_description: Option<String>,
+) -> QueryResult<usize> {
+    use crate::schema::tasks::dsl::*;
+    diesel::update(tasks.filter(id.eq(task_id)))
+        .set(description.eq(new_description))
+        .execute(conn)
+}
+
+pub fn update_task_due_date(
+    conn: &mut MysqlConnection,
+    task_id: i32,
+    new_due_date: Option<NaiveDateTime>,
+) -> QueryResult<usize> {
+    use crate::schema::tasks::dsl::*;
+    diesel::update(tasks.filter(id.eq(task_id)))
+        .set(due_date.eq(new_due_date))
+        .execute(conn)
+}
+
+pub fn update_task_is_done(
+    conn: &mut MysqlConnection,
+    task_id: i32,
+    new_is_done: bool,
+) -> QueryResult<usize> {
+    use crate::schema::tasks::dsl::*;
+    diesel::update(tasks.filter(id.eq(task_id)))
+        .set(is_done.eq(new_is_done))
+        .execute(conn)
+}
+
 pub fn update_task(
     conn: &mut MysqlConnection,
     task_id: i32,
