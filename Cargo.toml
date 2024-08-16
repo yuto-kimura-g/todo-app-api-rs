@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 # API Framework
 actix-web = "4"
+# CORS: Cross-Origin Resource Sharing
+actix-cors = "0.7"
 # Serialization and Deserialization
 serde = { version = "1.0", features = ["derive"] }
 # JSON

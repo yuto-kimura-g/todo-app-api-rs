@@ -108,6 +108,7 @@ diesel migration redo
     - diesel + mysql sample (CRUD): <https://github.com/diesel-rs/diesel/tree/2.2.x/examples/mysql/getting_started_step_3/src/bin>
   - <https://actix.rs/docs/getting-started>
   - <https://docs.rs/actix-web/latest/actix_web/>
+  - <https://docs.rs/actix-cors/latest/actix_cors/>
   - <https://docs.rs/diesel/latest/diesel/>
     - Create: <https://docs.rs/diesel/latest/diesel/fn.insert_into.html>
     - Read (one): <https://docs.rs/diesel/latest/diesel/query_dsl/trait.QueryDsl.html#method.select>
