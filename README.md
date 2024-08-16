@@ -1,11 +1,47 @@
 # todo-app-api
 
+mattnさんの記事 [（技術アウトプットに自作TODOアプリ）](https://levtech.jp/media/article/column/detail_473/) を読んで，TODOアプリを作ってみた．
+
 ## Tech Stack
 - Rust (programming language)
 - Actix Web (api framework)
 - mold (a fast linker)
 - Diesel (or mapper)
 - MySQL (rdbms)
+
+## API (CRUD)
+- `GET /`
+  - args: None
+  - returns: `index page`
+- `GET /tasks`
+  - args: None
+  - returns: `Vec<Task>`
+- `POST /tasks`
+  - args: `NewTask`
+  - returns: `Task`
+- `PUT /tasks/{id}`
+  - args: `id`, `NewTask`
+  - returns: `Task`
+- `DELETE /tasks/{id}`
+  - args: `id`
+  - returns: None
+
+```rust
+// src/models.rs
+struct Task {
+  id: i32,
+  title: String,
+  description: Option<String>,
+  due_date: Option<chrono::NaiveDateTime>,
+  is_done: bool,
+}
+struct NewTask {
+  title: String,
+  description: Option<String>,
+  due_date: Option<chrono::NaiveDateTime>,
+  is_done: bool,
+}
+```
 
 ## LOG
 ```bash
@@ -91,3 +127,5 @@ diesel migration redo
   - <https://youtu.be/4Q7FAMydzOU?si=EjewNYm9KgkIWMfo>
 - spot
   - MySQL setup error: <https://redj.hatenablog.com/entry/2023/04/09/012242>
+- ChatGPT-4o
+- GitHub Copilot
