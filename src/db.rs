@@ -1,61 +1,63 @@
 use crate::models::{NewTask, Task};
-use chrono::NaiveDateTime;
 use diesel::prelude::*;
-use diesel::{Connection, MysqlConnection};
-use dotenv::dotenv;
+use diesel::r2d2::{self, ConnectionManager};
+use diesel::{result::Error as DieselError, MysqlConnection};
 
-pub fn establish_connection() -> MysqlConnection {
-    dotenv().ok();
-    let database_url = std::env::var("DATABASE_URL").expect("Error: loading DATABASE_URL");
-    MysqlConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error: connecting to {}", database_url))
+pub type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
+
+pub fn establish_connection_pool(database_url: &str) -> DbPool {
+    let conn_manager = ConnectionManager::<MysqlConnection>::new(database_url);
+    let n_pool: u32 = 16; // デフォルトは無制限
+    r2d2::Pool::builder()
+        .max_size(n_pool)
+        .build(conn_manager)
+        .expect("Error: failed to create connection pool")
 }
 
-pub fn create_task(
-    conn: &mut MysqlConnection,
-    new_title: String,
-    new_description: Option<String>,
-    new_due_date: Option<NaiveDateTime>,
-) -> QueryResult<usize> {
+pub async fn create_task(db_pool: &DbPool, new_task: NewTask) -> Result<Task, DieselError> {
     use crate::schema::tasks;
-    let new_task = NewTask {
-        title: new_title,
-        description: new_description,
-        due_date: new_due_date,
-        is_done: false,
-    };
+    // poolしているconnから一つ借りる
+    let mut db_conn = db_pool
+        .get()
+        .expect("Error: failed to get db connection from pool");
+    // PostgreSQLなら，returning句をサポートしているため get_result() を使えるが，
+    // MySQLはそんなもの無いので，execしてからfirst()する．
     diesel::insert_into(tasks::table)
         .values(&new_task)
-        .execute(conn)
+        .execute(&mut db_conn)?;
+    // .get_result(&mut db_conn)
+    tasks::table.order(tasks::id.desc()).first(&mut db_conn)
 }
 
-pub fn get_tasks(conn: &mut MysqlConnection) -> QueryResult<Vec<Task>> {
+pub async fn get_tasks(db_pool: &DbPool) -> Result<Vec<Task>, DieselError> {
     use crate::schema::tasks::dsl::*;
-    tasks.select(Task::as_select()).load(conn)
+    let mut db_conn = db_pool
+        .get()
+        .expect("Error: failed to get db connection from pool");
+    // tasks.select(tasks::all_columns()).load::<Task>(&mut db_conn)
+    tasks.load::<Task>(&mut db_conn)
 }
 
-pub fn update_task(
-    conn: &mut MysqlConnection,
+pub async fn update_task(
+    db_pool: &DbPool,
     task_id: i32,
-    // new_task: NewTask,
-    new_title: String,
-    new_description: Option<String>,
-    new_due_date: Option<NaiveDateTime>,
-    new_is_done: bool,
-) -> QueryResult<usize> {
+    new_task: NewTask,
+) -> Result<Task, DieselError> {
     use crate::schema::tasks::dsl::*;
-    let new_task = NewTask {
-        title: new_title,
-        description: new_description,
-        due_date: new_due_date,
-        is_done: new_is_done,
-    };
+    let mut db_conn = db_pool
+        .get()
+        .expect("Error: failed to get db connection from pool");
+    // createと同様，MySQLにはreturning句が無いので，execしてからfind().first()する．
     diesel::update(tasks.filter(id.eq(task_id)))
         .set(new_task)
-        .execute(conn)
+        .execute(&mut db_conn)?;
+    tasks.find(task_id).first(&mut db_conn)
 }
 
-pub fn delete_task(conn: &mut MysqlConnection, task_id: i32) -> QueryResult<usize> {
+pub async fn delete_task(db_pool: &DbPool, task_id: i32) -> Result<usize, DieselError> {
     use crate::schema::tasks::dsl::*;
-    diesel::delete(tasks.filter(id.eq(task_id))).execute(conn)
+    let mut db_conn = db_pool
+        .get()
+        .expect("Error: failed to get db connection from pool");
+    diesel::delete(tasks.filter(id.eq(task_id))).execute(&mut db_conn)
 }

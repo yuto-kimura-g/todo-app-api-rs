@@ -1,3 +1,5 @@
+// チュートリアルのコピペ．動作確認用
+
 fn main() {
     println!("Hello, world!");
 }

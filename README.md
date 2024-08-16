@@ -44,12 +44,14 @@ mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
 mysql> FLUSH PRIVILEGES;
 mysql> quit;
 
-mysql -u root -p
+# mysql -u <user> -p<password>
+mysql -u root -ppassword
 mysql> show databases;
 mysql> show tables from todoapp_db;
 mysql> show columns from tasks from todoapp_db;
 mysql> use todoapp_db;
 mysql> select * from tasks;
+mysql> truncate table tasks; # reset
 
 cargo install diesel_cli --no-default-features --features mysql
 # edit .env (DATABASE_URL)
@@ -72,9 +74,11 @@ diesel migration redo
   - <https://docs.rs/actix-web/latest/actix_web/>
   - <https://docs.rs/diesel/latest/diesel/>
     - Create: <https://docs.rs/diesel/latest/diesel/fn.insert_into.html>
-    - Read: <https://docs.rs/diesel/latest/diesel/query_dsl/trait.QueryDsl.html#method.select>
+    - Read (one): <https://docs.rs/diesel/latest/diesel/query_dsl/trait.QueryDsl.html#method.select>
+    - Read (all): <https://docs.rs/diesel/latest/diesel/prelude/trait.RunQueryDsl.html#method.load>
     - Update: <https://docs.rs/diesel/latest/diesel/fn.update.html>
     - Delete: <https://docs.rs/diesel/latest/diesel/fn.delete.html>
+    - pool (r2d2): <https://docs.rs/diesel/latest/diesel/r2d2/index.html>
   - <https://www.postman.com/>
 - overall
   - why TODO App: <https://levtech.jp/media/article/column/detail_473/>

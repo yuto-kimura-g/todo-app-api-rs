@@ -1,56 +1,80 @@
+use crate::{
+    db::{self, DbPool},
+    models::NewTask,
+};
 use actix_web::{
     http::{header::ContentType, StatusCode},
     web, HttpResponse, Responder,
 };
 
-use crate::models::Task;
-
 #[actix_web::get("/")]
 async fn index() -> impl Responder {
     HttpResponse::Ok()
         .status(StatusCode::OK)
-        .insert_header(ContentType::plaintext())
-        .body("Hello, Rust API World!")
+        .insert_header(ContentType::html())
+        .body("<h1>Hello, Rust API World!</h1>")
 }
 
+/// 引数の順番は関係ない
+/// web::X<T> を参照することだけ分かればよい
 #[actix_web::post("/tasks")]
-async fn create_task(task: web::Json<Task>) -> impl Responder {
-    println!("create_task: {:?}", task);
-    HttpResponse::Ok()
-        .status(StatusCode::CREATED)
-        .body("Task created")
+async fn create_task(db_pool: web::Data<DbPool>, new_task: web::Json<NewTask>) -> impl Responder {
+    // web::Data<DbPool> -> &DbPool
+    let db_pool: &DbPool = db_pool.get_ref();
+    // into_inner(): Deserialize Json -> NewTask
+    let new_task = new_task.into_inner();
+    match db::create_task(db_pool, new_task).await {
+        // .json(): Serialize Task -> Json
+        Ok(created_task) => HttpResponse::Ok()
+            .status(StatusCode::CREATED)
+            .json(created_task),
+        Err(err) => {
+            HttpResponse::InternalServerError().body(format!("Failed to create task: {:?}", err))
+        }
+    }
 }
 
 #[actix_web::get("/tasks")]
-async fn get_tasks() -> impl Responder {
-    HttpResponse::Ok()
-        .status(StatusCode::INTERNAL_SERVER_ERROR)
-        .body("get_tasks(): Not implemented")
+async fn get_tasks(db_pool: web::Data<DbPool>) -> impl Responder {
+    let db_pool = db_pool.get_ref();
+    match db::get_tasks(db_pool).await {
+        Ok(tasks) => HttpResponse::Ok().json(tasks),
+        Err(err) => {
+            HttpResponse::InternalServerError().body(format!("Failed to get tasks: {:?}", err))
+        }
+    }
 }
 
-// #[actix_web::get("/tasks/{id}")]
-// async fn get_task(id: web::Path<String>) -> impl Responder {
-//     let task = Task {
-//         id: id.to_string(),
-//         title: "Task 1".to_string(),
-//         description: Some("Task 1 description".to_string()),
-//         due_date: Some("2021-12-31".to_string()),
-//         is_done: false,
-//     };
-//     // Ok(web::Json(task))
-//     HttpResponse::Ok().status(StatusCode::OK).json(task)
-// }
-
 #[actix_web::put("/tasks/{id}")]
-async fn update_task() -> impl Responder {
-    HttpResponse::Ok()
-        .status(StatusCode::INTERNAL_SERVER_ERROR)
-        .body("update_task(): Not implemented")
+async fn update_task(
+    db_pool: web::Data<DbPool>,
+    task_id: web::Path<i32>,
+    new_task: web::Json<NewTask>,
+) -> impl Responder {
+    let db_pool = db_pool.get_ref();
+    // into_inner(): Path<i32> -> i32
+    let task_id = task_id.into_inner();
+    // into_inner(): Deserialize Json -> NewTask
+    let new_task = new_task.into_inner();
+    match db::update_task(db_pool, task_id, new_task).await {
+        Ok(updated_task) => HttpResponse::Ok().json(updated_task),
+        Err(err) => {
+            HttpResponse::InternalServerError().body(format!("Failed to update task: {:?}", err))
+        }
+    }
 }
 
 #[actix_web::delete("/tasks/{id}")]
-async fn delete_task() -> impl Responder {
-    HttpResponse::Ok()
-        .status(StatusCode::INTERNAL_SERVER_ERROR)
-        .body("delete_task(): Not implemented")
+async fn delete_task(db_pool: web::Data<DbPool>, task_id: web::Path<i32>) -> impl Responder {
+    let db_pool = db_pool.get_ref();
+    let task_id = task_id.into_inner();
+    match db::delete_task(db_pool, task_id).await {
+        Ok(_) => {
+            // 空のレスポンスを返す時は，finish()するらしい
+            HttpResponse::Ok().status(StatusCode::NO_CONTENT).finish()
+        }
+        Err(err) => {
+            HttpResponse::InternalServerError().body(format!("Failed to delete task: {:?}", err))
+        }
+    }
 }
