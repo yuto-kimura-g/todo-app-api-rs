@@ -18,9 +18,11 @@ async fn main() -> std::io::Result<()> {
     println!("\nLaunching server at http://{api_addr}:{api_port}\n");
     HttpServer::new(move || {
         let cors = Cors::default()
-            // .allow_any_origin()
             .allowed_origin(&client_url)
-            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"]);
+            // .allow_any_origin()
+            // .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+            .allow_any_method()
+            .allow_any_header();
 
         App::new()
             .wrap(cors)
